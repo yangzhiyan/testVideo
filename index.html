@@ -7,6 +7,17 @@
         position: relative;
         background: #000;
         position: absolute;
+        z-index: 99;
+    }
+
+    .background-container {
+        position: absolute;
+        overflow: hidden;
+        background-color: green;
+        padding: 12px;
+        width: 624px;
+        height: 824px;
+        border: 20px solid blue;
         z-index: 100;
     }
 
@@ -49,14 +60,17 @@
 </style>
 
 <div class="main-container">
-    <h1>hello test 22:08</h1>
-    <div class="video-container">
-        <video id="myVideo" playsinline webkit-playsinline="true" autoplay loop
-            poster="https://mdn.alipayobjects.com/huamei_mrdrkc/afts/img/9ehrQ4G789MAAAAAgBAAAAgADnRDAQFr/original">
-            <source src="https://gw.alipayobjects.com/v/huamei_mrdrkc/afts/video/V5eFTZ0SOvsAAAAAVNAAAAgAfoeUAQBr"
-                type="video/mp4">
-        </video>
+    <h1>hello test 22:10</h1>
+    <div class="background-container">
+        <div class="video-container">
+            <video id="myVideo" playsinline webkit-playsinline="true" autoplay loop
+                poster="https://mdn.alipayobjects.com/huamei_mrdrkc/afts/img/9ehrQ4G789MAAAAAgBAAAAgADnRDAQFr/original">
+                <source src="https://gw.alipayobjects.com/v/huamei_mrdrkc/afts/video/V5eFTZ0SOvsAAAAAVNAAAAgAfoeUAQBr"
+                    type="video/mp4">
+            </video>
+        </div>
     </div>
+
 </div>
 
 
