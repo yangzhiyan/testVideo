@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <title>H5 视频竖屏示例</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Helvetica Neue", Arial;
+            background: #f6f7fb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        header {
+            width: 100%;
+            max-width: 480px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: clamp(20px, 3.5vw, 32px);
+            margin: 0;
+            color: #111;
+        }
+
+        .hero {
+            width: 100%;
+            max-width: 480px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 6px 20px rgba(11, 20, 40, 0.06);
+            position: relative;
+        }
+
+        .hero video {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            display: block;
+        }
+
+        .content {
+            max-width: 480px;
+            width: 100%;
+            padding: 16px;
+        }
+
+        .desc {
+            margin: 0 0 12px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn.primary {
+            background: #0077ff;
+            color: #fff;
+        }
+
+        .btn.ghost {
+            background: transparent;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>竖屏 H5 视频示例</h1>
+    </header>
+
+    <section class="hero">
+        <video id="heroVideo" autoplay muted loop playsinline webkit-playsinline preload="auto"
+            poster="https://mdn.alipayobjects.com/huamei_mrdrkc/afts/img/9ehrQ4G789MAAAAAgBAAAAgADnRDAQFr/original">
+            <source src="./mixkit-vertical-video-of-a-colorful-performance-of-a-young-asian-51287-hd-ready.mp4"
+                type="video/mp4">
+            您的浏览器不支持 HTML5 视频。
+        </video>
+    </section>
+
+    <div class="content">
+        <p class="desc">这是一个竖屏视频示例。视频已转码为 iPhone/Safari/微信 全平台兼容格式，静音自动循环播放。</p>
+        <div class="actions">
+            <button class="btn primary" id="btnPlayToggle">播放/暂停</button>
+            <button class="btn ghost" id="btnDownload">下载封面</button>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const video = document.getElementById('heroVideo');
+            const btnPlay = document.getElementById('btnPlayToggle');
+            const btnDownload = document.getElementById('btnDownload');
+
+            btnPlay.addEventListener('click', () => {
+                if (video.paused) video.play();
+                else video.pause();
+            });
+
+            btnDownload.addEventListener('click', () => {
+                const link = document.createElement('a');
+                // poster 图片
+                link.href = video.getAttribute('poster');
+                link.download = 'poster.jpg';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            });
+
+            // 首次尝试播放
+            video.muted = true;
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    // autoplay 被阻止时不做处理
+                });
+            }
+
+            // 页面切换标签页时暂停节省资源
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    video.pause();
+                } else {
+                    video.play().catch(() => { });
+                }
+            });
+        })();
+    </script>
+
+</body>
+
+</html>
