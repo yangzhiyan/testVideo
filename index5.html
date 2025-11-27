@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <title>H5 视频竖屏示例</title>
+    <title>H5 视频竖屏示例 - 带边框</title>
     <style>
         body {
             margin: 0;
@@ -29,21 +29,28 @@
             color: #111;
         }
 
+        /* 外层容器，用来显示边框图片 */
         .hero {
             width: 100%;
             max-width: 480px;
+            position: relative;
             border-radius: 12px;
             overflow: hidden;
-            background: #000;
+            background: url('https://mdn.alipayobjects.com/huamei_mrdrkc/afts/img/6kwRR7bdM38AAAAAQ_AAAAgADnRDAQFr/original') no-repeat center/cover;
             box-shadow: 0 6px 20px rgba(11, 20, 40, 0.06);
-            position: relative;
+            padding: 16px;
+            /* 内边距留出“边框”位置 */
+            box-sizing: border-box;
         }
 
+        /* 视频本身充满内部容器 */
         .hero video {
             width: 100%;
             height: auto;
             object-fit: cover;
             display: block;
+            border-radius: 8px;
+            /* 视频圆角，避免覆盖边框 */
         }
 
         .content {
@@ -86,7 +93,7 @@
 <body>
 
     <header>
-        <h1>竖屏 H5 视频示例</h1>
+        <h1>竖屏 H5 视频示例 - 带边框</h1>
     </header>
 
     <section class="hero">
@@ -99,7 +106,7 @@
     </section>
 
     <div class="content">
-        <p class="desc">这是一个竖屏视频示例。视频已转码为 iPhone/Safari/微信 全平台兼容格式，静音自动循环播放。</p>
+        <p class="desc">这是一个竖屏视频示例，视频加了一个图片边框。静音自动循环播放，兼容 iPhone / Safari / 微信。</p>
     </div>
 
     <script>
@@ -110,18 +117,13 @@
             video.muted = true;
             const playPromise = video.play();
             if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    // autoplay 被阻止时不做处理
-                });
+                playPromise.catch(() => { });
             }
 
             // 页面切换标签页时暂停节省资源
             document.addEventListener('visibilitychange', () => {
-                if (document.hidden) {
-                    video.pause();
-                } else {
-                    video.play().catch(() => { });
-                }
+                if (document.hidden) video.pause();
+                else video.play().catch(() => { });
             });
         })();
     </script>
