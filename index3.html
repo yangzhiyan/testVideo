@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+    <title>示例 H5 视频封面页面</title>
+    <style>
+        :root {
+            --bg: #f6f7fb;
+            --card-bg: #ffffff;
+            --accent: #0077ff
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: system-ui, -apple-system, \"Helvetica Neue\", Arial
+        }
+
+        body {
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px
+        }
+
+        header {
+            width: 100%;
+            max-width: 480px;
+            margin-bottom: 18px
+        }
+
+        h1 {
+            margin: 0;
+            padding: 12px 0;
+            text-align: center;
+            font-size: clamp(20px, 3.5vw, 32px);
+            color: #111
+        }
+
+        /* 中间视频/封面框 */
+        .hero {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(11, 20, 40, 0.06);
+            overflow: hidden
+        }
+
+        .media-wrap {
+            position: relative;
+            padding-top: 150%
+                /* 竖屏比例，例如 2:3，可根据需求调整 */
+            ;
+            /* 16:9 比例 */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat
+        }
+
+        /* 让视频铺满容器 */
+        .media-wrap video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block
+        }
+
+        /* 如果视频被隐藏，则会显示背景图（由 .hero 设置） */
+        .media-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            padding: 14px
+        }
+
+        .cta {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 14px
+        }
+
+        /* 下面的介绍 + 按钮 */
+        .content {
+            padding: 18px
+        }
+
+        .desc {
+            margin: 0 0 12px 0;
+            color: #333;
+            line-height: 1.6
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 0;
+            font-weight: 600;
+            cursor: pointer
+        }
+
+        .btn.primary {
+            background: var(--accent);
+            color: #fff
+        }
+
+        .btn.ghost {
+            background: transparent;
+            border: 1px solid #ddd
+        }
+
+        /* 响应式 */
+        @media (max-width:480px) {
+            .media-overlay {
+                padding: 10px
+            }
+
+            .cta {
+                font-size: 13px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>页面标题 — H5 视频兼容示例</h1>
+    </header>
+
+    <section class="hero" aria-label="视频展示区域">
+        <!-- media-wrap 的 background-image 同时作为备用背景图（当 video 无法播放时显现） -->
+        <div class="media-wrap" id="mediaWrap"
+            style="background-image: url('https://mdn.alipayobjects.com/huamei_mrdrkc/afts/img/9ehrQ4G789MAAAAAgBAAAAgADnRDAQFr/original');">
+            <!-- Video: 使用多种格式并带上移动端所需属性 -->
+            <video id="heroVideo" muted playsinline webkit-playsinline autoplay loop
+                poster="https://mdn.alipayobjects.com/huamei_mrdrkc/afts/img/9ehrQ4G789MAAAAAgBAAAAgADnRDAQFr/original"
+                aria-hidden="false">
+                <!-- 请替换下面的 src 为你自己的文件（优先 mp4/h264 + webm） -->
+                <source src="https://gw.alipayobjects.com/v/huamei_mrdrkc/afts/video/V5eFTZ0SOvsAAAAAVNAAAAgAfoeUAQBr"
+                    type="video/mp4; codecs=\" avc1.42E01E, mp4a.40.2\"">
+                <source src="video.webm" type="video/webm; codecs=\" vp8, vorbis\"">
+                <!-- 浏览器不支持 video 时的替代内容 -->
+                您的浏览器不支持内嵌视频。请更新浏览器或使用支持 HTML5 的浏览器。
+            </video>
+
+            <!-- 简单的覆盖层：用于放 CTA、logo 等 -->
+            <div class="media-overlay">
+                <div class="cta">静音自动循环 / 兼容移动端</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <p class="desc">no metadata这里是关于视频/封面的简短介绍。若设备或浏览器不允许自动播放视频，将显示为背景图。你可以把按钮链接到更多详情或跳转页面。</p>
+            <div class="actions">
+                <button class="btn primary" id="btnPlayToggle">播放/暂停（切换）</button>
+                <button class="btn ghost" id="btnDownload">下载封面</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 兼容处理：尝试播放 video 并处理 promise（某些浏览器会阻止自动播放）
+        (function () {
+            const video = document.getElementById('heroVideo');
+            const wrap = document.getElementById('mediaWrap');
+            const btn = document.getElementById('btnPlayToggle');
+            const btnDownload = document.getElementById('btnDownload');
+
+            // 尝试播放，若失败则隐藏 video，使用背景图作为后备
+            function tryAutoPlay() {
+                // iOS/部分浏览器需要 muted 才允许 autoplay
+                video.muted = true;
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // 自动播放成功 - 确保 video 可见
+                        video.style.display = 'block';
+                        wrap.style.backgroundImage = '';// 移除背景图以避免覆盖
+                    }).catch((err) => {
+                        // 自动播放被阻止或发生错误，隐藏 video，保留背景图
+                        console.warn('自动播放失败，切换到背景图展示:', err);
+                        video.style.display = 'none';
+                        // 保留 wrap.style.backgroundImage ，请确保 poster.jpg 存在
+                    });
+                } else {
+                    // play() 返回 undefined（非常旧的浏览器），不强求
+                }
+            }
+
+            // 供按钮手动切换播放/暂停
+            btn.addEventListener('click', function () {
+                if (video.style.display === 'none') {
+                    // 尝试再次播放
+                    video.style.display = 'block';
+                    tryAutoPlay();
+                    return;
+                }
+                if (video.paused) video.play(); else video.pause();
+            });
+
+            // 示例：下载 poster
+            btnDownload.addEventListener('click', function () {
+                const link = document.createElement('a');
+                link.href = wrap.style.backgroundImage.replace(/(^url\("?|'?)|("?\)$)/g, '');
+                link.download = 'poster.jpg';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            });
+
+            // 首次尝试自动播放
+            tryAutoPlay();
+
+            // 可选：当进入后台/切换标签页时暂停以节省资源
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    if (!video.paused) video.pause();
+                } else {
+                    // 尝试恢复（如果 video 元素可见）
+                    if (video.style.display !== 'none') video.play().catch(() => { });
+                }
+            });
+
+        })();
+    </script>
+</body>
+
+</html>
