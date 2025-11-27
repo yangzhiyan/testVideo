@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <title>H5 视频竖屏示例 - 带边框 & 安卓循环优化</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Helvetica Neue", Arial;
+            background: #f6f7fb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        header {
+            width: 100%;
+            max-width: 480px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: clamp(20px, 3.5vw, 32px);
+            margin: 0;
+            color: #111;
+        }
+
+        /* 外层容器，用来显示边框图片 */
+        .hero {
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: url('https://mdn.alipayobjects.com/huamei_mrdrkc/afts/img/6kwRR7bdM38AAAAAQ_AAAAgADnRDAQFr/original') no-repeat center/cover;
+            box-shadow: 0 6px 20px rgba(11, 20, 40, 0.06);
+            padding: 16px;
+            /* 内边距留出“边框”位置 */
+            box-sizing: border-box;
+        }
+
+        /* 视频本身充满内部容器 */
+        .hero video {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            display: block;
+            border-radius: 8px;
+            /* 视频圆角，避免覆盖边框 */
+        }
+
+        .content {
+            max-width: 480px;
+            width: 100%;
+            padding: 16px;
+        }
+
+        .desc {
+            margin: 0 0 12px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn.primary {
+            background: #0077ff;
+            color: #fff;
+        }
+
+        .btn.ghost {
+            background: transparent;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>竖屏 H5 视频示例 - 安卓循环优化</h1>
+    </header>
+
+    <section class="hero">
+        <video id="heroVideo" autoplay muted loop playsinline webkit-playsinline preload="auto"
+            poster="https://mdn.alipayobjects.com/huamei_mrdrkc/afts/img/9ehrQ4G789MAAAAAgBAAAAgADnRDAQFr/original">
+            <source src="./mixkit-vertical-video-of-a-colorful-performance-of-a-young-asian-51287-hd-ready.mp4"
+                type="video/mp4">
+            您的浏览器不支持 HTML5 视频。
+        </video>
+    </section>
+
+    <div class="content">
+        <p class="desc">
+            这是一个竖屏视频示例，视频加了图片边框。静音自动循环播放，兼容 iPhone / Safari / 微信 / 安卓浏览器。
+        </p>
+    </div>
+
+    <script>
+        (function () {
+            const video = document.getElementById('heroVideo');
+
+            // 安卓 / 部分浏览器 loop 失效时手动重播
+            video.addEventListener('ended', () => {
+                video.currentTime = 0;
+                video.play().catch(() => { });
+            });
+
+            // 首次尝试播放
+            video.muted = true;
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => { });
+            }
+
+            // 页面切换标签页时暂停节省资源
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) video.pause();
+                else video.play().catch(() => { });
+            });
+        })();
+    </script>
+
+</body>
+
+</html>
